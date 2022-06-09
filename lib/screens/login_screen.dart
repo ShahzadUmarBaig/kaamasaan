@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kaamasaan/screens/home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -15,12 +17,7 @@ class LoginScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-            Container(
-              height: 100,
-              width: 100,
-              color: Colors.grey,
-              child: Text("Logo Space"),
-            ),
+            SvgPicture.asset("assets/images/logo.svg", height: 50),
             SizedBox(height: 24),
             Flexible(
               child: Text(
@@ -59,6 +56,10 @@ class LoginScreen extends StatelessWidget {
                   fillColor: Colors.grey.shade200,
                   hintText: "Type here..",
                   hintStyle: TextStyle(color: Colors.grey),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                     borderRadius: BorderRadius.circular(16),
@@ -68,21 +69,25 @@ class LoginScreen extends StatelessWidget {
             ),
             SizedBox(height: 0),
             SizedBox(height: MediaQuery.of(context).size.height * 0.25),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue.shade300,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 36,
-                  vertical: 14,
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 24),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.blue.shade300,
+                  fixedSize: Size(MediaQuery.of(context).size.width, 56),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
-              ),
-              onPressed: () {},
-              child: Text(
-                "Save",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w300,
+                onPressed: () =>
+                    Navigator.pushReplacementNamed(context, HomeScreen.id),
+                child: Text(
+                  "Save",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w300,
+                  ),
                 ),
               ),
             ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kaamasaan/screens/home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kaamasaan/applications/home_bloc/home_bloc.dart';
+import 'package:kaamasaan/route_generator.dart';
 import 'package:kaamasaan/screens/login_screen.dart';
 
 void main() {
@@ -11,12 +13,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => HomeBloc()),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const LoginScreen(),
+        onGenerateRoute: RouteGenerator.generateRoute,
       ),
-      home: const LoginScreen(),
     );
   }
 }

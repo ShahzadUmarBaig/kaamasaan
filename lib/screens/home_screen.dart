@@ -1,51 +1,151 @@
-import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kaamasaan/applications/home_bloc/home_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+
+class HomeScreen extends StatefulWidget {
+  static const String id = "HomeScreen";
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
-  late final RecorderController recorderController;
-
+class _HomeScreenState extends State<HomeScreen> {
+  final PlayerController playerController = PlayerController();
   @override
   void initState() {
     super.initState();
-    recorderController = RecorderController();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      body: Stack(
-        children: [
-          ListView(
-            children: [],
-          ),
-          Positioned(
-            top: 20,
-            width: MediaQuery.of(context).size.width,
-            child: LanguageIndicator(),
-          ),
-          Positioned(
-            bottom: 25,
-            width: MediaQuery.of(context).size.width,
-            child: ButtonPanel(controller: recorderController),
-          ),
-          Positioned(
-            top: 200,
-            width: MediaQuery.of(context).size.width,
+      body: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          return Stack(
+            children: [
+              Positioned(
+                top: 20,
+                width: MediaQuery.of(context).size.width,
+                child: LanguageIndicator(),
+              ),
+              Positioned(
+                bottom: 25,
+                width: MediaQuery.of(context).size.width,
+                child: ButtonPanel(),
+              ),
+              Positioned(
+                top: 100,
+                width: MediaQuery.of(context).size.width,
+                child: WaveForm(),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class WaveForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        if (state.isRecording) {
+          return Card(
+            margin: EdgeInsets.all(24),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 1,
             child: AudioWaveforms(
               size: Size(MediaQuery.of(context).size.width, 100.0),
-              recorderController: recorderController,
+              recorderController: state.recorderController,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              enableGesture: true,
+              waveStyle: WaveStyle(
+                showMiddleLine: false,
+                extendWaveform: true,
+              ),
             ),
-          ),
-        ],
-      ),
+          );
+        } else if (!state.isRecording && state.lastRecordingPath.isNotEmpty) {
+          return Card(
+            margin: EdgeInsets.all(24),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 1,
+            child: Row(
+              children: [
+                SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
+                  child: IconButton(
+                    splashRadius: 24,
+                    padding: EdgeInsets.zero,
+                    onPressed: () async {
+                      if (state.isPlaying) {
+                        context.read<HomeBloc>().add(OnPlayerStopped());
+                      } else {
+                        context.read<HomeBloc>().add(OnPlayerStarted());
+                      }
+                    },
+                    icon: state.isPlaying
+                        ? Icon(Icons.pause)
+                        : Icon(Icons.play_arrow),
+                  ),
+                ),
+                Expanded(
+                  flex: 10,
+                  child: AudioFileWaveforms(
+                    size: Size(MediaQuery.of(context).size.width * 0.65, 100.0),
+                    playerController: state.playerController,
+                    // enableSeekGesture: true,
+                    padding: EdgeInsets.zero,
+                    margin: EdgeInsets.zero,
+                    playerWaveStyle: PlayerWaveStyle(
+                      fixedWaveColor: Colors.blueGrey,
+                      liveWaveColor: Colors.blue,
+                      scaleFactor: 0.65,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+              ],
+            ),
+          );
+        } else {
+          return Card(
+            margin: EdgeInsets.all(24),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 1,
+            child: Container(
+              height: 100,
+              child: Center(
+                child: Text(
+                  "Press MIC Button To Start Recording",
+                  style: TextStyle(
+                    color: Colors.grey.shade300,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      },
     );
   }
 }
@@ -56,11 +156,11 @@ class LanguageIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 56,
       margin: EdgeInsets.all(20),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 3,
+        elevation: 1,
         child: Row(
           children: [
             SizedBox(width: 20),
@@ -86,73 +186,63 @@ class LanguageIndicator extends StatelessWidget {
 }
 
 class ButtonPanel extends StatelessWidget {
-  final RecorderController controller;
-  const ButtonPanel({Key? key, required this.controller}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        height: 50,
-        width: 160,
-        child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          elevation: 3,
-          child: Material(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.history_edu_outlined),
-                  splashRadius: 16,
-                  iconSize: 20,
-                  color: Colors.black54,
-                  padding: EdgeInsets.zero,
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return Center(
+          child: Container(
+            height: 50,
+            width: 150,
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              elevation: 1,
+              child: Material(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        print(state.lastRecordingPath);
+                        // ApiService().sendAudioFile(state.lastRecordingPath);
+                        Directory appDocDir =
+                            await getApplicationDocumentsDirectory();
+                        Directory tempDir = await getTemporaryDirectory();
+                        // if (state.isRecording) {
+                        //   context.read<HomeBloc>().add(OnRecordingStopped());
+                        // } else {
+                        //   context.read<HomeBloc>().add(OnRecordingStarted());
+                        // }
+                      },
+                      icon: state.isRecording
+                          ? Icon(Icons.stop)
+                          : Icon(Icons.mic),
+                      splashRadius: 16,
+                      iconSize: 20,
+                      color: state.isRecording ? Colors.red : Colors.green,
+                      padding: EdgeInsets.zero,
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      onPressed: () {},
+                      child: Text(
+                        "History",
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  onPressed: () async {
-                    DateTime dateTime = DateTime.now();
-                    String initialPath =
-                        "/data/user/0/io.flutterly.kaamasaan/cache/";
-                    String path = dateTime.day.toString() +
-                        "-" +
-                        dateTime.month.toString() +
-                        "-" +
-                        dateTime.year.toString() +
-                        "-" +
-                        dateTime.hour.toString() +
-                        "-" +
-                        dateTime.minute.toString() +
-                        "-" +
-                        dateTime.second.toString() + ".wav";
-                    await controller.record(initialPath + path);
-                  },
-                  icon: Icon(Icons.mic),
-                  splashRadius: 16,
-                  iconSize: 20,
-                  color: Colors.green,
-                  padding: EdgeInsets.zero,
-                ),
-                IconButton(
-                  onPressed: () async {
-                    final path = await controller.stop();
-                    print(path);
-                  },
-                  icon: Icon(Icons.settings),
-                  splashRadius: 16,
-                  iconSize: 20,
-                  color: Colors.black54,
-                  padding: EdgeInsets.zero,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
