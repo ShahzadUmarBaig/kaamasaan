@@ -19,7 +19,7 @@ class HomeState {
         isRecording: false,
         recorderController: RecorderController()
           ..androidEncoder = AndroidEncoder.aac
-          ..androidOutputFormat = AndroidOutputFormat.,
+          ..androidOutputFormat = AndroidOutputFormat.mpeg4,
         lastRecordingPath: '',
         playerController: PlayerController(),
         isPlaying: false,
