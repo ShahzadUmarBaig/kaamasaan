@@ -87,9 +87,7 @@ class LoginScreen extends StatelessWidget {
             ),
             SizedBox(height: 8),
             CupertinoButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, routeName);
-              },
+              onPressed: () {},
               child: Text(
                 "Cancel",
                 style: TextStyle(
