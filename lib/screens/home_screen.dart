@@ -37,6 +37,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: ButtonPanel(),
               ),
+              if (state.isTranslated)
+                Positioned(
+                  top: 100,
+                  width: MediaQuery.of(context).size.width,
+                  child: Card(
+                    margin: EdgeInsets.all(24),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    elevation: 1,
+                    color: Colors.blue.shade300,
+                    child: Container(
+                      padding: EdgeInsets.only(top: 8),
+                      height: 50,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Translation",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              Positioned(
+                top: 135,
+                width: MediaQuery.of(context).size.width,
+                child: TranslatedTextView(),
+              ),
               Positioned(
                 bottom: 70,
                 width: MediaQuery.of(context).size.width,
@@ -56,98 +90,183 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+class TranslatedTextView extends StatelessWidget {
+  const TranslatedTextView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return Card(
+          margin: EdgeInsets.all(24),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 1,
+          child: !state.isTranslated
+              ? Container()
+              : Container(
+                  padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                  child: state.translation!.data.fold((l) {
+                    return Row(
+                      children: [],
+                    );
+                  }, (r) {
+                    return Column(
+                      children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  r.urdu,
+                                  textDirection: TextDirection.rtl,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ]),
+                        Divider(),
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  r.english,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ]),
+                      ],
+                    );
+                  }),
+                ),
+        );
+      },
+    );
+  }
+}
+
 class WaveForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
-        if (state.isRecording) {
-          return Card(
-            margin: EdgeInsets.all(24),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 1,
-            child: AudioWaveforms(
-              size: Size(MediaQuery.of(context).size.width, 100.0),
-              recorderController: state.recorderController,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              enableGesture: true,
-              waveStyle: WaveStyle(
-                showMiddleLine: false,
-                extendWaveform: true,
+        return Card(
+          margin: EdgeInsets.all(24),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 1,
+          child: getWaveFormWidget(state),
+        );
+      },
+    );
+  }
+
+  Widget getWaveFormWidget(HomeState state) {
+    if (state.isRecording) {
+      return WaveFormRecordingView();
+    } else if (state.isLoading) {
+      return Container(
+        height: 100,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    } else if (!state.isRecording && state.lastRecordingPath.isNotEmpty) {
+      return WaveFormOutputView();
+    } else {
+      return Container(
+        height: 100,
+        child: Center(
+          child: Text(
+            "Press MIC Button To Start Recording",
+            style: TextStyle(
+              color: Colors.grey.shade300,
+              fontWeight: FontWeight.w400,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+}
+
+class WaveFormRecordingView extends StatelessWidget {
+  const WaveFormRecordingView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return AudioWaveforms(
+          size: Size(MediaQuery.of(context).size.width, 100.0),
+          recorderController: state.recorderController,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: EdgeInsets.zero,
+          margin: EdgeInsets.symmetric(horizontal: 16),
+          enableGesture: true,
+          waveStyle: WaveStyle(
+            showMiddleLine: false,
+            extendWaveform: true,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class WaveFormOutputView extends StatelessWidget {
+  const WaveFormOutputView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return Row(
+          children: [
+            SizedBox(width: 8),
+            Expanded(
+              flex: 2,
+              child: IconButton(
+                splashRadius: 24,
+                padding: EdgeInsets.zero,
+                onPressed: () async {
+                  if (state.isPlaying) {
+                    context.read<HomeBloc>().add(OnPlayerStopped());
+                  } else {
+                    context.read<HomeBloc>().add(OnPlayerStarted());
+                  }
+                },
+                icon: state.isPlaying
+                    ? Icon(Icons.pause)
+                    : Icon(Icons.play_arrow),
               ),
             ),
-          );
-        } else if (!state.isRecording && state.lastRecordingPath.isNotEmpty) {
-          return Card(
-            margin: EdgeInsets.all(24),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 1,
-            child: Row(
-              children: [
-                SizedBox(width: 8),
-                Expanded(
-                  flex: 2,
-                  child: IconButton(
-                    splashRadius: 24,
-                    padding: EdgeInsets.zero,
-                    onPressed: () async {
-                      if (state.isPlaying) {
-                        context.read<HomeBloc>().add(OnPlayerStopped());
-                      } else {
-                        context.read<HomeBloc>().add(OnPlayerStarted());
-                      }
-                    },
-                    icon: state.isPlaying
-                        ? Icon(Icons.pause)
-                        : Icon(Icons.play_arrow),
-                  ),
-                ),
-                Expanded(
-                  flex: 10,
-                  child: AudioFileWaveforms(
-                    size: Size(MediaQuery.of(context).size.width * 0.65, 100.0),
-                    playerController: state.playerController,
-                    // enableSeekGesture: true,
-                    padding: EdgeInsets.zero,
-                    margin: EdgeInsets.zero,
-                    playerWaveStyle: PlayerWaveStyle(
-                      fixedWaveColor: Colors.blueGrey,
-                      liveWaveColor: Colors.blue,
-                      scaleFactor: 0.65,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-              ],
-            ),
-          );
-        } else {
-          return Card(
-            margin: EdgeInsets.all(24),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 1,
-            child: Container(
-              height: 100,
-              child: Center(
-                child: Text(
-                  "Press MIC Button To Start Recording",
-                  style: TextStyle(
-                    color: Colors.grey.shade300,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
-                  ),
+            Expanded(
+              flex: 10,
+              child: AudioFileWaveforms(
+                size: Size(MediaQuery.of(context).size.width * 0.65, 100.0),
+                playerController: state.playerController,
+                // enableSeekGesture: true,
+                padding: EdgeInsets.zero,
+                margin: EdgeInsets.zero,
+                playerWaveStyle: PlayerWaveStyle(
+                  fixedWaveColor: Colors.blueGrey,
+                  liveWaveColor: Colors.blue,
+                  scaleFactor: 0.65,
                 ),
               ),
             ),
-          );
-        }
+            SizedBox(width: 8),
+          ],
+        );
       },
     );
   }
@@ -246,13 +365,19 @@ class ButtonPanel extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      onPressed: () async {
-                        if (state.isRecording) {
-                          context.read<HomeBloc>().add(OnRecordingStopped());
-                        } else {
-                          context.read<HomeBloc>().add(OnRecordingStarted());
-                        }
-                      },
+                      onPressed: state.isLoading
+                          ? null
+                          : () async {
+                              if (state.isRecording) {
+                                context
+                                    .read<HomeBloc>()
+                                    .add(OnRecordingStopped());
+                              } else {
+                                context
+                                    .read<HomeBloc>()
+                                    .add(OnRecordingStarted());
+                              }
+                            },
                       icon: state.isRecording
                           ? Icon(Icons.stop)
                           : Icon(Icons.mic),

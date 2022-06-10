@@ -4,10 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/177396990/android.audio_waveforms.iml" filepath="$PROJECT_DIR$/.idea/modules/177396990/android.audio_waveforms.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-225886010/android.ffmpeg_kit_flutter.iml" filepath="$PROJECT_DIR$/.idea/modules/-225886010/android.ffmpeg_kit_flutter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1385727632/android.flutter_sound.iml" filepath="$PROJECT_DIR$/.idea/modules/1385727632/android.flutter_sound.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1841284043/android.path_provider_android.iml" filepath="$PROJECT_DIR$/.idea/modules/1841284043/android.path_provider_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/272802710/android.audio_waveforms.iml" filepath="$PROJECT_DIR$/.idea/modules/272802710/android.audio_waveforms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1903962974/android.ffmpeg_kit_flutter.iml" filepath="$PROJECT_DIR$/.idea/modules/1903962974/android.ffmpeg_kit_flutter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/370703656/android.flutter_sound.iml" filepath="$PROJECT_DIR$/.idea/modules/370703656/android.flutter_sound.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/227254883/android.path_provider_android.iml" filepath="$PROJECT_DIR$/.idea/modules/227254883/android.path_provider_android.iml" />
     </modules>
   </component>
 </project>

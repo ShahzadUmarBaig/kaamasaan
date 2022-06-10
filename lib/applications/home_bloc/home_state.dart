@@ -2,11 +2,15 @@ part of 'home_bloc.dart';
 
 class HomeState {
   final bool isRecording;
+  final bool isPlaying;
+  final bool isFailedToConvert;
+  final bool isLoading;
+  final bool isTranslated;
+
   final RecorderController recorderController;
   final String lastRecordingPath;
   final PlayerController playerController;
-  final bool isPlaying;
-  final bool isFailedToConvert;
+  final AudioTranslationModel? translation;
 
   HomeState({
     required this.isRecording,
@@ -15,6 +19,9 @@ class HomeState {
     required this.playerController,
     required this.isPlaying,
     required this.isFailedToConvert,
+    required this.isLoading,
+    required this.translation,
+    required this.isTranslated,
   });
 
   factory HomeState.initial() => HomeState(
@@ -26,6 +33,9 @@ class HomeState {
         playerController: PlayerController(),
         isPlaying: false,
         isFailedToConvert: false,
+        isLoading: false,
+        translation: null,
+        isTranslated: false,
       );
 
   HomeState copyWith({
@@ -33,6 +43,9 @@ class HomeState {
     String? lastRecordingPath,
     bool? isPlaying,
     bool? isFailedToConvert,
+    bool? isLoading,
+    AudioTranslationModel? translation,
+    bool? isTranslated,
   }) =>
       HomeState(
         isRecording: isRecording ?? this.isRecording,
@@ -41,5 +54,8 @@ class HomeState {
         playerController: this.playerController,
         isPlaying: isPlaying ?? this.isPlaying,
         isFailedToConvert: isFailedToConvert ?? this.isFailedToConvert,
+        isLoading: isLoading ?? this.isLoading,
+        translation: translation ?? this.translation,
+        isTranslated: isTranslated ?? this.isTranslated,
       );
 }

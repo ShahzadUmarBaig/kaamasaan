@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => HomeBloc()),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'KaamAsaan',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

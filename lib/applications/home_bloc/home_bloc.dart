@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_session.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
+import 'package:kaamasaan/domain/AudioTranslationModel.dart';
 import 'package:kaamasaan/services/api_service.dart';
 import 'package:meta/meta.dart';
 
@@ -22,6 +23,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
     on<OnRecordingStopped>((event, emit) async {
       final path = await state.recorderController.stop();
+      emit(state.copyWith(
+        isLoading: true,
+        isRecording: false,
+        isTranslated: false,
+      ));
       if (path != null) {
         add(OnPlayerSetup(path));
       }
@@ -29,6 +35,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<OnPlayerSetup>((event, emit) async {
       await state.playerController.preparePlayer(event.path);
+
       String fileNameWithFormat = event.path.split("/").last;
 
       String fileNameOnly = fileNameWithFormat.split(".").first;
@@ -41,7 +48,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       if (returnCode != null) {
         if (ReturnCode.isSuccess(returnCode)) {
-          await apiService.sendAudioFile(newFilePath);
+          AudioTranslationModel translation =
+              await apiService.sendAudioFile(newFilePath);
+          emit(state.copyWith(translation: translation, isTranslated: true));
         }
         if (returnCode.isValueError()) {
           emit(state.copyWith(isFailedToConvert: true));
@@ -49,7 +58,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       }
       emit(state.copyWith(
         lastRecordingPath: event.path,
-        isRecording: false,
+        isLoading: false,
       ));
     });
 
