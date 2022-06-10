@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ButtonPanel(),
               ),
               Positioned(
-                top: 100,
+                bottom: 70,
                 width: MediaQuery.of(context).size.width,
                 child: WaveForm(),
               ),
