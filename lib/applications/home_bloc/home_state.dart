@@ -6,6 +6,7 @@ class HomeState {
   final String lastRecordingPath;
   final PlayerController playerController;
   final bool isPlaying;
+  final bool isFailedToConvert;
 
   HomeState({
     required this.isRecording,
@@ -13,6 +14,7 @@ class HomeState {
     required this.lastRecordingPath,
     required this.playerController,
     required this.isPlaying,
+    required this.isFailedToConvert,
   });
 
   factory HomeState.initial() => HomeState(
@@ -23,15 +25,21 @@ class HomeState {
         lastRecordingPath: '',
         playerController: PlayerController(),
         isPlaying: false,
+        isFailedToConvert: false,
       );
 
-  HomeState copyWith(
-          {bool? isRecording, String? lastRecordingPath, bool? isPlaying}) =>
+  HomeState copyWith({
+    bool? isRecording,
+    String? lastRecordingPath,
+    bool? isPlaying,
+    bool? isFailedToConvert,
+  }) =>
       HomeState(
         isRecording: isRecording ?? this.isRecording,
         recorderController: this.recorderController,
         lastRecordingPath: lastRecordingPath ?? this.lastRecordingPath,
         playerController: this.playerController,
         isPlaying: isPlaying ?? this.isPlaying,
+        isFailedToConvert: isFailedToConvert ?? this.isFailedToConvert,
       );
 }

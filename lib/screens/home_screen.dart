@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kaamasaan/applications/home_bloc/home_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = "HomeScreen";
@@ -45,6 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: WaveForm(),
               ),
+              if (state.isFailedToConvert)
+                Positioned(
+                  top: 230,
+                  width: MediaQuery.of(context).size.width,
+                  child: ErrorBar(),
+                ),
             ],
           );
         },
@@ -185,6 +188,44 @@ class LanguageIndicator extends StatelessWidget {
   }
 }
 
+class ErrorBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 56,
+      margin: EdgeInsets.all(20),
+      child: Card(
+        color: Colors.red.shade300,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 1,
+        child: Row(
+          children: [
+            SizedBox(width: 20),
+            Text(
+              "Failed To Convert Audio",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+                color: Colors.white,
+              ),
+            ),
+            Spacer(),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.refresh),
+              color: Colors.white,
+              padding: EdgeInsets.zero,
+              splashRadius: 20,
+              splashColor: Colors.redAccent.shade700,
+            ),
+            SizedBox(width: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ButtonPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -206,16 +247,11 @@ class ButtonPanel extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () async {
-                        print(state.lastRecordingPath);
-                        // ApiService().sendAudioFile(state.lastRecordingPath);
-                        Directory appDocDir =
-                            await getApplicationDocumentsDirectory();
-                        Directory tempDir = await getTemporaryDirectory();
-                        // if (state.isRecording) {
-                        //   context.read<HomeBloc>().add(OnRecordingStopped());
-                        // } else {
-                        //   context.read<HomeBloc>().add(OnRecordingStarted());
-                        // }
+                        if (state.isRecording) {
+                          context.read<HomeBloc>().add(OnRecordingStopped());
+                        } else {
+                          context.read<HomeBloc>().add(OnRecordingStarted());
+                        }
                       },
                       icon: state.isRecording
                           ? Icon(Icons.stop)
