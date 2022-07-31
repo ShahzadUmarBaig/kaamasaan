@@ -1,11 +1,12 @@
 part of 'home_bloc.dart';
 
 class HomeState {
-  final bool isRecording;
+  final PlayerController playerController;
   final RecorderController recorderController;
   final String lastRecordingPath;
-  final PlayerController playerController;
+  final bool isRecording;
   final bool isPlaying;
+  final bool isLoading;
   final ApiException failure;
   final Audio? audio;
 
@@ -17,6 +18,7 @@ class HomeState {
     required this.isPlaying,
     required this.failure,
     required this.audio,
+    required this.isLoading,
   });
 
   factory HomeState.initial() => HomeState(
@@ -29,6 +31,7 @@ class HomeState {
         isPlaying: false,
         failure: ApiException(""),
         audio: null,
+        isLoading: false,
       );
 
   HomeState copyWith({
@@ -36,6 +39,7 @@ class HomeState {
     String? lastRecordingPath,
     bool? isPlaying,
     ApiException? failure,
+    bool? isLoading,
   }) =>
       HomeState(
         isRecording: isRecording ?? this.isRecording,
@@ -45,6 +49,7 @@ class HomeState {
         isPlaying: isPlaying ?? this.isPlaying,
         failure: failure ?? this.failure,
         audio: audio,
+        isLoading: isLoading ?? this.isLoading,
       );
 
   HomeState copyWithAudio({Audio? audio}) => HomeState(
@@ -55,5 +60,6 @@ class HomeState {
         isPlaying: isPlaying,
         failure: failure,
         audio: audio,
+        isLoading: false,
       );
 }

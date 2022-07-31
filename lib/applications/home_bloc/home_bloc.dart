@@ -29,6 +29,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
 
     on<OnPlayerSetup>((event, emit) async {
+      emit(state.copyWith(isLoading: true));
       await state.playerController.preparePlayer(event.path);
       try {
         String newFilePath = await apiService.convertAudioToWav(event.path);
@@ -38,7 +39,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       } on ApiException catch (e) {
         emit(state.copyWith(failure: e));
       }
-      emit(state.copyWith(lastRecordingPath: event.path, isRecording: false));
+      emit(state.copyWith(
+          lastRecordingPath: event.path, isRecording: false, isLoading: false));
     });
 
     on<OnPlayerStarted>((event, emit) async {

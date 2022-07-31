@@ -37,40 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: ButtonPanel(),
               ),
-              if (state.isTranslated)
-                Positioned(
-                  top: 100,
-                  width: MediaQuery.of(context).size.width,
-                  child: Card(
-                    margin: EdgeInsets.all(24),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    elevation: 1,
-                    color: Colors.blue.shade300,
-                    child: Container(
-                      padding: EdgeInsets.only(top: 8),
-                      height: 50,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Translation",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 17,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              Positioned(
-                top: 135,
-                width: MediaQuery.of(context).size.width,
-                child: TranslatedTextView(),
-              ),
               Positioned(
                 bottom: 70,
                 width: MediaQuery.of(context).size.width,
@@ -92,66 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
-    );
-  }
-}
-
-class TranslatedTextView extends StatelessWidget {
-  const TranslatedTextView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        return Card(
-          margin: EdgeInsets.all(24),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          elevation: 1,
-          child: !state.isTranslated
-              ? Container()
-              : Container(
-                  padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                  child: state.translation!.data.fold((l) {
-                    return Row(
-                      children: [],
-                    );
-                  }, (r) {
-                    return Column(
-                      children: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  r.urdu,
-                                  textDirection: TextDirection.rtl,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            ]),
-                        Divider(),
-                        Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  r.english,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            ]),
-                      ],
-                    );
-                  }),
-                ),
-        );
-      },
     );
   }
 }
