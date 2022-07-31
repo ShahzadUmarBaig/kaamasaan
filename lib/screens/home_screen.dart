@@ -42,11 +42,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: WaveForm(),
               ),
-              if (state.isFailedToConvert)
+              if (state.failure.message.isNotEmpty)
                 Positioned(
                   top: 230,
                   width: MediaQuery.of(context).size.width,
                   child: ErrorBar(),
+                ),
+              if (state.failure.message.isEmpty && state.audio != null)
+                Positioned(
+                  top: 230,
+                  width: MediaQuery.of(context).size.width,
+                  child: TranslationWidget(),
                 ),
             ],
           );
@@ -188,40 +194,104 @@ class LanguageIndicator extends StatelessWidget {
   }
 }
 
+class TranslationWidget extends StatelessWidget {
+  const TranslationWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return Container(
+          margin: EdgeInsets.all(20),
+          child: Card(
+            color: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Column(
+              children: [
+                Container(
+                  height: 30,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    ),
+                    color: Colors.blue,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Translation",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontFamily: "Poppins",
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  width: MediaQuery.of(context).size.width,
+                  child: Text(
+                    state.audio!.data.urdu,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                Divider(
+                  thickness: 0,
+                  height: 0,
+                  endIndent: 16,
+                  indent: 16,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  width: MediaQuery.of(context).size.width,
+                  child: Text(
+                    state.audio!.data.english,
+                    textDirection: TextDirection.ltr,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class ErrorBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 56,
-      margin: EdgeInsets.all(20),
-      child: Card(
-        color: Colors.red.shade300,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 1,
-        child: Row(
-          children: [
-            SizedBox(width: 20),
-            Text(
-              "Failed To Convert Audio",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return Container(
+          height: 56,
+          margin: EdgeInsets.all(20),
+          child: Card(
+            color: Colors.red.shade300,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 1,
+            child: Row(
+              children: [
+                SizedBox(width: 20),
+                Text(
+                  state.failure.message,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.white,
+                  ),
+                ),
+                Spacer(),
+              ],
             ),
-            Spacer(),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.refresh),
-              color: Colors.white,
-              padding: EdgeInsets.zero,
-              splashRadius: 20,
-              splashColor: Colors.redAccent.shade700,
-            ),
-            SizedBox(width: 20),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -233,12 +303,12 @@ class ButtonPanel extends StatelessWidget {
       builder: (context, state) {
         return Center(
           child: Container(
-            height: 50,
-            width: 150,
+            height: 60,
+            width: 60,
             child: Card(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
-              elevation: 1,
+              elevation: 2,
               child: Material(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -257,20 +327,9 @@ class ButtonPanel extends StatelessWidget {
                           ? Icon(Icons.stop)
                           : Icon(Icons.mic),
                       splashRadius: 16,
-                      iconSize: 20,
+                      iconSize: 24,
                       color: state.isRecording ? Colors.red : Colors.green,
                       padding: EdgeInsets.zero,
-                    ),
-                    CupertinoButton(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      onPressed: () {},
-                      child: Text(
-                        "History",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey.shade400,
-                        ),
-                      ),
                     ),
                   ],
                 ),

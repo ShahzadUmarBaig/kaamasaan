@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kaamasaan/screens/disclaimer_screen.dart';
 import 'package:kaamasaan/screens/home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -79,8 +80,8 @@ class LoginScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                onPressed: () =>
-                    Navigator.pushReplacementNamed(context, HomeScreen.id),
+                onPressed: () => Navigator.pushReplacementNamed(
+                    context, DisclaimerScreen.id),
                 child: Text(
                   "Save",
                   style: TextStyle(
@@ -92,15 +93,15 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 8),
-            CupertinoButton(
-              onPressed: () {},
-              child: Text(
-                "Cancel",
-                style: TextStyle(
-                  fontSize: 17,
-                ),
-              ),
-            ),
+            // CupertinoButton(
+            //   onPressed: () {},
+            //   child: Text(
+            //     "Cancel",
+            //     style: TextStyle(
+            //       fontSize: 17,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

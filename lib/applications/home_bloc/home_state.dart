@@ -6,7 +6,8 @@ class HomeState {
   final String lastRecordingPath;
   final PlayerController playerController;
   final bool isPlaying;
-  final bool isFailedToConvert;
+  final ApiException failure;
+  final Audio? audio;
 
   HomeState({
     required this.isRecording,
@@ -14,7 +15,8 @@ class HomeState {
     required this.lastRecordingPath,
     required this.playerController,
     required this.isPlaying,
-    required this.isFailedToConvert,
+    required this.failure,
+    required this.audio,
   });
 
   factory HomeState.initial() => HomeState(
@@ -25,14 +27,15 @@ class HomeState {
         lastRecordingPath: '',
         playerController: PlayerController(),
         isPlaying: false,
-        isFailedToConvert: false,
+        failure: ApiException(""),
+        audio: null,
       );
 
   HomeState copyWith({
     bool? isRecording,
     String? lastRecordingPath,
     bool? isPlaying,
-    bool? isFailedToConvert,
+    ApiException? failure,
   }) =>
       HomeState(
         isRecording: isRecording ?? this.isRecording,
@@ -40,6 +43,17 @@ class HomeState {
         lastRecordingPath: lastRecordingPath ?? this.lastRecordingPath,
         playerController: this.playerController,
         isPlaying: isPlaying ?? this.isPlaying,
-        isFailedToConvert: isFailedToConvert ?? this.isFailedToConvert,
+        failure: failure ?? this.failure,
+        audio: audio,
+      );
+
+  HomeState copyWithAudio({Audio? audio}) => HomeState(
+        isRecording: isRecording,
+        recorderController: recorderController,
+        lastRecordingPath: lastRecordingPath,
+        playerController: playerController,
+        isPlaying: isPlaying,
+        failure: failure,
+        audio: audio,
       );
 }

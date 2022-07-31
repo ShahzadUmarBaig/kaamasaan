@@ -18,10 +18,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => HomeBloc()),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        title: 'KaamAsaan',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.blue),
         home: const LoginScreen(),
         onGenerateRoute: RouteGenerator.generateRoute,
       ),

@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_session.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
+import 'package:kaamasaan/models/audio.dart';
 import 'package:kaamasaan/services/api_service.dart';
 import 'package:meta/meta.dart';
 
@@ -29,28 +30,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<OnPlayerSetup>((event, emit) async {
       await state.playerController.preparePlayer(event.path);
-      String fileNameWithFormat = event.path.split("/").last;
-
-      String fileNameOnly = fileNameWithFormat.split(".").first;
-
-      String newFilePath =
-          "/data/user/0/io.flutterly.kaamasaan/cache/" + fileNameOnly + ".wav";
-      FFmpegSession session =
-          await FFmpegKit.execute("-i ${event.path} $newFilePath");
-      final returnCode = await session.getReturnCode();
-
-      if (returnCode != null) {
-        if (ReturnCode.isSuccess(returnCode)) {
-          await apiService.sendAudioFile(newFilePath);
-        }
-        if (returnCode.isValueError()) {
-          emit(state.copyWith(isFailedToConvert: true));
-        }
+      try {
+        String newFilePath = await apiService.convertAudioToWav(event.path);
+        Audio audio = await apiService.sendAudioFile(newFilePath);
+        emit(state.copyWithAudio(audio: audio));
+        emit(state.copyWith(failure: ApiException("")));
+      } on ApiException catch (e) {
+        emit(state.copyWith(failure: e));
       }
-      emit(state.copyWith(
-        lastRecordingPath: event.path,
-        isRecording: false,
-      ));
+      emit(state.copyWith(lastRecordingPath: event.path, isRecording: false));
     });
 
     on<OnPlayerStarted>((event, emit) async {
