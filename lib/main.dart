@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         title: 'KaamAsaan',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: const LoginScreen(),
+        home: LoginScreen(),
         onGenerateRoute: RouteGenerator.generateRoute,
       ),
     );

@@ -7,10 +7,10 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-2.1.7" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider-2.0.11" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider_ios-2.0.9" />
-      <root url="file://$USER_HOME$/.pub-cache/git/audio_waveforms-3e90b07c29efa1455c4da1719e726426413a9735" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_sound-9.2.13" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_sound_web-9.2.13" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/ffmpeg_kit_flutter-4.5.1" />
+      <root url="file://$PROJECT_DIR$/packages/audio_waveforms" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

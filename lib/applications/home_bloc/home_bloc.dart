@@ -1,8 +1,7 @@
+import 'dart:async';
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:bloc/bloc.dart';
-import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter/ffmpeg_session.dart';
-import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:kaamasaan/models/audio.dart';
 import 'package:kaamasaan/services/api_service.dart';
 import 'package:meta/meta.dart';
@@ -12,6 +11,7 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ApiService apiService = ApiService();
+  StreamSubscription? audioStream;
   HomeBloc() : super(HomeState.initial()) {
     on<OnRecordingStarted>((event, emit) async {
       state.recorderController.refresh();
@@ -44,7 +44,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
 
     on<OnPlayerStarted>((event, emit) async {
-      await state.playerController.startPlayer(true);
+      await state.playerController.seekTo(0);
+      await state.playerController
+          .startPlayer(finishMode: FinishMode.stop)
+          .then((value) => null);
       emit(state.copyWith(isPlaying: true));
     });
     on<OnPlayerStopped>((event, emit) async {

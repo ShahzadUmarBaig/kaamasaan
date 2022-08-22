@@ -6,17 +6,6 @@
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/../../../FlutterSDK/flutter/.pub-cache/git/audio_waveforms-3e90b07c29efa1455c4da1719e726426413a9735/android" />
-            <option value="$PROJECT_DIR$/../../../FlutterSDK/flutter/.pub-cache/hosted/pub.dartlang.org/ffmpeg_kit_flutter-4.5.1/android" />
-            <option value="$PROJECT_DIR$/../../../FlutterSDK/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_sound-9.2.13/android" />
-            <option value="$PROJECT_DIR$/../../../FlutterSDK/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_android-2.0.14/android" />
-          </set>
-        </option>
-        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
